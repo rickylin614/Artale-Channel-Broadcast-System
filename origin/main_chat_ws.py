@@ -7,7 +7,7 @@
 
 import re, struct, sys, time, threading, asyncio, json, datetime
 from pathlib import Path
-from scapy.all import AsyncSniffer, TCP
+from scapy.all import AsyncSniffer, TCP, conf
 import websockets
 from queue import Queue
 
@@ -77,6 +77,7 @@ class ChatParser:
                     out["Channel"] = f"CH{val}"
                     break
 
+        print(out)
         return out
 
 
@@ -126,5 +127,6 @@ def handle_packet(pkt):
 # ======== 主程式 ========
 if __name__ == "__main__":
     print(f">> 🟢 啟動 Sniffer 中（{BPF_FILTER}） ✅ 已啟動 MapleStory 聊天 WebSocket 推播器")
+    print(conf.iface)
     threading.Thread(target=lambda: AsyncSniffer(filter=BPF_FILTER, prn=handle_packet, store=False).start(), daemon=True).start()
     asyncio.run(websocket_server())
