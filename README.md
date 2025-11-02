@@ -42,8 +42,12 @@
 web_hook = "https://discord.com/api/webhooks/1234567890123456789/AbCdEfGhIjKlMnOpQrStUvWxYz"
 ```
 
+## 四、windows用戶
 
-## 四、啟動程序
+- 需要安裝 [Npcap](https://nmap.org/npcap/)
+- 安裝後需要重啟電腦
+
+## 五、啟動程序
 
 - 右鍵點擊app.exe並選擇系統管理員身分執行
 
