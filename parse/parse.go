@@ -247,8 +247,7 @@ func ParseMegaphoneData(input string) map[string]string {
 
 		// 特例處理（保留你原本的邏輯）
 		switch key {
-		case "Nickname":
-			val = val
+		// case "Nickname":
 		// case "Text":
 		// 	if len(val) > 4 && val[1] == '\x00' && val[2] == '\x00' && val[3] == '\x00' {
 		// 		val = val[4:]
