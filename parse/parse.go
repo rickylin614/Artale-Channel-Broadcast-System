@@ -239,7 +239,7 @@ func ParseMegaphoneData(input string) map[string]string {
 		cleaned := make([]rune, 0, len(val))
 		for _, r := range val {
 			// 保留常見可見字元與常用符號
-			if r >= 0x20 && r != 0x7F && utf8.ValidRune(r) {
+			if r >= 0x30 && r != 0x7F && utf8.ValidRune(r) {
 				cleaned = append(cleaned, r)
 			}
 		}
