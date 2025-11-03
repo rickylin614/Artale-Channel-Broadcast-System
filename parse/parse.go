@@ -8,6 +8,7 @@ import (
 	"sort"
 	"strings"
 	"time"
+	"unicode"
 	"unicode/utf8"
 )
 
@@ -235,24 +236,23 @@ func ParseMegaphoneData(input string) map[string]string {
 		val = strings.TrimSpace(val)
 		val = strings.Trim(val, "\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0A\x0B\x0C\x0D\x0E\x0F\xf4")
 
-		// 清除控制字元與無效 rune
-		cleaned := make([]rune, 0, len(val))
-		for _, r := range val {
-			// 保留常見可見字元與常用符號
-			if r >= 0x30 && r != 0x7F && utf8.ValidRune(r) {
-				cleaned = append(cleaned, r)
-			}
+		index := strings.Index(val, "\x02")
+		if index > 0 {
+			val = val[:index]
 		}
-		val = string(cleaned)
+
+		// 清除控制字元與無效 rune
+		val = CleanPrintableUTF8(val)
 
 		// 特例處理（保留你原本的邏輯）
 		switch key {
 		// case "Nickname":
-		// case "Text":
-		// 	if len(val) > 4 && val[1] == '\x00' && val[2] == '\x00' && val[3] == '\x00' {
-		// 		val = val[4:]
-		// 	}
-		// 	val = strings.TrimSuffix(val, "\x06")
+		case "Text":
+			// if len(val) > 4 && val[1] == '\x00' && val[2] == '\x00' && val[3] == '\x00' {
+			// 	val = val[4:]
+			// }
+			// val = strings.TrimSuffix(val, "\x06")
+			val = val
 		// case "Type":
 		// 	val = strings.TrimSuffix(val, "\b")
 		case "ProfileCode":
@@ -266,4 +266,34 @@ func ParseMegaphoneData(input string) map[string]string {
 	}
 
 	return data
+}
+
+// CleanPrintableUTF8: 逐位元組解碼；跳過無效 UTF-8 bytes；只保留可印刷字元與基本空白。
+// 會移除所有 Unicode control 字元 (Cc)、format (Cf) 與不可列印字元。
+// 如果你想保留換行/制表，可以在判斷中允許 '\n', '\r', '\t'。
+func CleanPrintableUTF8(s string) string {
+	var b strings.Builder
+	b.Grow(len(s))
+
+	for i := 0; i < len(s); {
+		r, size := utf8.DecodeRuneInString(s[i:])
+		// 若是單一位元組的 RuneError，代表該位元組不是合法 UTF-8 開頭 -> 跳過該位元組
+		if r == utf8.RuneError && size == 1 {
+			i++
+			continue
+		}
+
+		// 刪掉 control 類別、不可列印
+		if unicode.IsControl(r) || !unicode.IsPrint(r) {
+			// 如果你想保留 \n \r \t，可以把下面改成:
+			// if (r != '\n' && r != '\r' && r != '\t') && (unicode.IsControl(r) || !unicode.IsPrint(r)) { ... }
+			i += size
+			continue
+		}
+
+		b.WriteRune(r)
+		i += size
+	}
+
+	return b.String()
 }
