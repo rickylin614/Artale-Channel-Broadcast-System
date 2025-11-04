@@ -5,7 +5,6 @@ import (
 	"artale-broadcast/devicex"
 	"artale-broadcast/discordsender"
 	"artale-broadcast/parse"
-	"fmt"
 	"log"
 	"strings"
 
@@ -53,12 +52,13 @@ func startSniffer(sender *discordsender.Sender) {
 					continue
 				}
 				msgInput := payloadStr[index:]
-				data := parse.ParseMegaphoneData(msgInput)
-				fmt.Println(data)
+				data := parse.ParseStruct([]byte(msgInput))
+				log.Println(data)
 				sender.InputChan <- discordsender.Message{
 					Nickname:    data["Nickname"],
 					ProfileCode: data["ProfileCode"],
 					Text:        data["Text"],
+					Channel:     data["Channel"],
 				}
 			}
 		}

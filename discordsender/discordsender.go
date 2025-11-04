@@ -12,6 +12,7 @@ type Message struct {
 	Nickname    string
 	ProfileCode string
 	Text        string
+	Channel     string
 }
 
 // Sender 用來接收訊息並轉發到 Discord
@@ -53,9 +54,19 @@ func (s *Sender) loop() {
 	}
 }
 
-// sendToDiscord 格式化並送出訊息
 func (s *Sender) sendToDiscord(msg Message) {
-	content := fmt.Sprintf("%s#%s: %s", msg.Nickname, msg.ProfileCode, msg.Text)
+	// Discord Markdown 格式：
+	// 1️⃣ 第一行：粗體顯示使用者與代碼
+	// 2️⃣ 第二行：灰色小字顯示頻道
+	// 3️⃣ 第三行：訊息正文
+
+	content := fmt.Sprintf("廣播人: **%s#%s**\n> 頻道: %s\n%s\n",
+		msg.Nickname,
+		msg.ProfileCode,
+		msg.Channel,
+		msg.Text,
+	)
+
 	body, _ := json.Marshal(map[string]string{
 		"content": content,
 	})

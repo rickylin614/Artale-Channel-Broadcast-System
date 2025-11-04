@@ -24,8 +24,8 @@ var KNOWN = map[string]bool{
 }
 
 // ---------- ChatParser ----------
-func parseStruct(data []byte) map[string]interface{} {
-	out := map[string]interface{}{}
+func ParseStruct(data []byte) map[string]string {
+	out := make(map[string]string, 8)
 	colors := []string{}
 	L := len(data)
 	i := 0
@@ -113,45 +113,6 @@ func parseStruct(data []byte) map[string]interface{} {
 
 	return out
 }
-
-func ParsePacketBytes(blob []byte) map[string]interface{} {
-	// remove leading 'TOZ ' + size (first 8 bytes) if present
-	if len(blob) > 8 {
-		return parseStruct(blob[8:])
-	}
-	return map[string]interface{}{}
-}
-
-// // ParseMegaphoneData parses the megaphone messages into structured maps
-// func ParseMegaphoneData(input string) map[string]string {
-// 	// 切割每一筆 MegaphoneData
-// 	entries := strings.Split(input, "MegaphoneData\x06\x04")
-// 	if len(entries) != 2 {
-// 		return map[string]string{} // 解析失敗
-// 	}
-
-// 	// 正則用來擷取鍵值
-// 	re := regexp.MustCompile(`([A-Za-z]+)\x04([^\x06\x0b]+)`)
-
-// 	e := entries[1]
-// 	e = strings.TrimSpace(e)
-// 	if e == "" {
-// 		return map[string]string{}
-// 	}
-// 	data := make(map[string]string)
-// 	data["Header"] = "MegaphoneData"
-
-// 	matches := re.FindAllStringSubmatch(e, -1)
-// 	for _, m := range matches {
-// 		if len(m) == 3 {
-// 			key := strings.TrimSpace(m[1])
-// 			val := strings.TrimSpace(m[2])
-// 			data[key] = val
-// 		}
-// 	}
-
-// 	return data
-// }
 
 // ParseMegaphoneData 解析單筆 MegaphoneData 字串（可以包含控制字元），回傳 map
 func ParseMegaphoneData(input string) map[string]string {
@@ -247,12 +208,11 @@ func ParseMegaphoneData(input string) map[string]string {
 		// 特例處理（保留你原本的邏輯）
 		switch key {
 		// case "Nickname":
-		case "Text":
-			// if len(val) > 4 && val[1] == '\x00' && val[2] == '\x00' && val[3] == '\x00' {
-			// 	val = val[4:]
-			// }
-			// val = strings.TrimSuffix(val, "\x06")
-			val = val
+		// case "Text":
+		// if len(val) > 4 && val[1] == '\x00' && val[2] == '\x00' && val[3] == '\x00' {
+		// 	val = val[4:]
+		// }
+		// val = strings.TrimSuffix(val, "\x06")
 		// case "Type":
 		// 	val = strings.TrimSuffix(val, "\b")
 		case "ProfileCode":
