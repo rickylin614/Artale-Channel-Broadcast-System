@@ -53,7 +53,8 @@ web_hook = "https://discord.com/api/webhooks/1234567890123456789/AbCdEfGhIjKlMnO
 
 ## 重新打包執行檔案:
 
-1. 確認安裝git
+1. 安裝golang (網路找教學謝謝)
+1. 安裝git (網路找教學謝謝)
 2. 開啟git bash應用程序, 並到專案資料夾
 3. 執行以下
 ```

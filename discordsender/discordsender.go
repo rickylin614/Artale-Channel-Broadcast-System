@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 )
 
 // Message represents one parsed megaphone message
@@ -60,12 +61,20 @@ func (s *Sender) sendToDiscord(msg Message) {
 	// 2️⃣ 第二行：灰色小字顯示頻道
 	// 3️⃣ 第三行：訊息正文
 
-	content := fmt.Sprintf("廣播人: **%s#%s**\n> 頻道: %s\n%s\n",
+	content := fmt.Sprintf("**%s#%s**\n> 頻道: %s\n> %s\n",
 		msg.Nickname,
 		msg.ProfileCode,
 		msg.Channel,
 		msg.Text,
 	)
+
+	if strings.Contains(content, "組隊") ||
+		strings.Contains(content, "组队") ||
+		strings.Contains(content, "訓練") ||
+		strings.Contains(content, "弓箭手村") ||
+		strings.Contains(content, "都懂") {
+		return
+	}
 
 	body, _ := json.Marshal(map[string]string{
 		"content": content,
